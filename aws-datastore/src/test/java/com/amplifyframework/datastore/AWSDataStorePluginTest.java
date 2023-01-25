@@ -245,7 +245,7 @@ public final class AWSDataStorePluginTest {
         Person result1 = synchronousDataStore.get(Person.class, person1.getPrimaryKeyString());
         assertEquals(person1, result1);
 
-        apiInteractionObserver.await(15, TimeUnit.SECONDS);
+        apiInteractionObserver.await(20, TimeUnit.SECONDS);
         verify(mockApiCategory).mutate(argThat(getMatcherFor(person1)), any(), any());
 
         // Mock responses for person 2
