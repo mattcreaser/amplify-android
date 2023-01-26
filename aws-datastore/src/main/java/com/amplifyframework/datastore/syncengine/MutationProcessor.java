@@ -209,7 +209,7 @@ final class MutationProcessor {
             String modelName,
             ModelWithMetadata<T> modelWithMetadata
     ) {
-        System.out.println("Mutation Processed");
+        LOG.info("Mutation Processed");
         OutboxMutationEvent<T> mutationEvent = OutboxMutationEvent.create(modelName, modelWithMetadata);
         Amplify.Hub.publish(HubChannel.DATASTORE, mutationEvent.toHubEvent());
     }

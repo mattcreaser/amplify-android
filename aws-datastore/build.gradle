@@ -60,3 +60,13 @@ dependencies {
 afterEvaluate {
     it.android.kotlinOptions.jvmTarget = JavaVersion.VERSION_1_8.toString()
 }
+
+tasks.withType(Test) {
+    testLogging {
+        exceptionFormat 'full'
+        showCauses true
+        showExceptions true
+        showStackTraces true
+        showStandardStreams true
+    }
+}
