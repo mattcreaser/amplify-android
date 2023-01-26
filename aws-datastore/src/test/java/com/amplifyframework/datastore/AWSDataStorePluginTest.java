@@ -241,11 +241,14 @@ public final class AWSDataStorePluginTest {
                 .start();
 
         // Save person 1
+        System.out.println("Saving person 1");
         synchronousDataStore.save(person1);
         Person result1 = synchronousDataStore.get(Person.class, person1.getPrimaryKeyString());
         assertEquals(person1, result1);
 
-        apiInteractionObserver.await(20, TimeUnit.SECONDS);
+        System.out.println("Waiting for event #1");
+        apiInteractionObserver.await(5, TimeUnit.SECONDS);
+        System.out.println("Mutation event #1 received");
         verify(mockApiCategory).mutate(argThat(getMatcherFor(person1)), any(), any());
 
         // Mock responses for person 2
@@ -261,6 +264,7 @@ public final class AWSDataStorePluginTest {
         }).when(mockApiPlugin).mutate(any(), any(), any());
 
         // Do the thing!
+        System.out.println("Clearing datastore");
         synchronousDataStore.clear();
 
         assertRemoteSubscriptionsCancelled();
@@ -273,9 +277,11 @@ public final class AWSDataStorePluginTest {
                 .start();
 
         // Interact with the DataStore after the clear
+        System.out.println("Saving person 2");
         synchronousDataStore.save(person2);
 
         // Verify person 2 was published to the cloud
+        System.out.println("Waiting for event #2");
         apiInteractionObserver.await();
 
         // Verify the orchestrator started back up and subscriptions are active.
