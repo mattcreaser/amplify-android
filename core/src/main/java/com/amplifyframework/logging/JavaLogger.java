@@ -18,6 +18,8 @@ package com.amplifyframework.logging;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.time.Instant;
+import java.util.Date;
 import java.util.Objects;
 
 final class JavaLogger implements Logger {
@@ -103,6 +105,8 @@ final class JavaLogger implements Logger {
 
     private void log(@NonNull LogLevel level, @Nullable String message, @Nullable Throwable throwable) {
         StringBuilder lineBuilder = new StringBuilder()
+                .append(Instant.now().toString())
+                .append(" ")
                 .append(level)
                 .append("/")
                 .append(namespace)
@@ -113,7 +117,6 @@ final class JavaLogger implements Logger {
                     .append(throwable);
         }
         System.out.println(lineBuilder.toString());
-
     }
 
 }
