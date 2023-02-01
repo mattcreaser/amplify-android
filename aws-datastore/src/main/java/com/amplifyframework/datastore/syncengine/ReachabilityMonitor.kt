@@ -64,8 +64,6 @@ private class ReachabilityMonitorImpl constructor(val schedulerProvider: Schedul
         emitter = ObservableOnSubscribe { emitter ->
             val callback = getCallback(emitter)
             connectivityProvider.registerDefaultNetworkCallback(context, callback)
-            // Provide the current network status upon subscription.
-            emitter.onNext(connectivityProvider.hasActiveNetwork)
         }
     }
 
