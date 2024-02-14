@@ -1,3 +1,7 @@
+## [Release 2.14.10](https://github.com/mattcreaser/amplify-android/releases/tag/release_v2.14.10)
+
+This is a re-release of version 2.14.8. Use this instead of version 2.14.9.
+
 ## [Release 2.14.8](https://github.com/aws-amplify/amplify-android/releases/tag/release_v2.14.8)
 
 ### Miscellaneous
