@@ -24,14 +24,16 @@ import android.database.sqlite.SQLiteOpenHelper
 import android.database.sqlite.SQLiteQueryBuilder
 import android.net.Uri
 import android.text.TextUtils
-import androidx.annotation.VisibleForTesting
 import com.amplifyframework.core.Amplify
 import com.amplifyframework.core.category.CategoryType
 import com.amplifyframework.storage.s3.AWSS3StoragePlugin
 
-@VisibleForTesting
-internal class TransferDBHelper(private val context: Context) :
-    SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
+internal class TransferDBHelper(private val context: Context) : SQLiteOpenHelper(
+    context,
+    DATABASE_NAME,
+    null,
+    DATABASE_VERSION
+) {
 
     internal val contentUri: Uri
     private val uriMatcher: UriMatcher
@@ -46,7 +48,7 @@ internal class TransferDBHelper(private val context: Context) :
 
         // This represents the latest database version.
         // Update this when the database is being upgraded.
-        private const val DATABASE_VERSION = 9
+        private const val DATABASE_VERSION = 10
         private const val BASE_PATH = "transfers"
         private const val TRANSFERS = 10
         private const val TRANSFER_ID = 20

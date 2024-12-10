@@ -1,3 +1,181 @@
+## [Release 2.25.0](https://github.com/aws-amplify/amplify-android/releases/tag/release_v2.25.0)
+
+### Features
+- **auth:** Add Passwordless features to Amplify ([#2952](https://github.com/aws-amplify/amplify-android/issues/2952))
+
+[See all changes between 2.24.1 and 2.25.0](https://github.com/aws-amplify/amplify-android/compare/release_v2.24.1...release_v2.25.0)
+
+## [Release 2.24.1](https://github.com/aws-amplify/amplify-android/releases/tag/release_v2.24.1)
+
+### Bug Fixes
+- **analytics:** Fix accessing the Analytics category from RxAmplify or Kotlin Facade ([#2944](https://github.com/aws-amplify/amplify-android/issues/2944))
+- **api:** Fix connecting to AppSync from China with API category ([#2948](https://github.com/aws-amplify/amplify-android/issues/2948))
+
+[See all changes between 2.24.0 and 2.24.1](https://github.com/aws-amplify/amplify-android/compare/release_v2.24.0...release_v2.24.1)
+
+## [Release 2.24.0](https://github.com/aws-amplify/amplify-android/releases/tag/release_v2.24.0)
+
+### Features
+- **auth:** Add support for Email MFA ([#2935](https://github.com/aws-amplify/amplify-android/issues/2935))
+
+[See all changes between 2.23.0 and 2.24.0](https://github.com/aws-amplify/amplify-android/compare/release_v2.23.0...release_v2.24.0)
+
+## [Release 2.23.0](https://github.com/aws-amplify/amplify-android/releases/tag/release_v2.23.0)
+
+### Features
+- **predictions:** Added region handling for creating correct streaming endpoint from region ([#2923](https://github.com/aws-amplify/amplify-android/issues/2923))
+- **api:** Pass authorization in header instead of query parameter for API category ([#2918](https://github.com/aws-amplify/amplify-android/issues/2918))
+
+[See all changes between 2.22.0 and 2.23.0](https://github.com/aws-amplify/amplify-android/compare/release_v2.22.0...release_v2.23.0)
+
+## [Release 2.22.0](https://github.com/aws-amplify/amplify-android/releases/tag/release_v2.22.0)
+
+### Features
+- **storage:** implement multiple buckets support ([#2904](https://github.com/aws-amplify/amplify-android/issues/2904))
+
+[See all changes between 2.21.1 and 2.22.0](https://github.com/aws-amplify/amplify-android/compare/release_v2.21.1...release_v2.22.0)
+
+## [Release 2.21.1](https://github.com/aws-amplify/amplify-android/releases/tag/release_v2.21.1)
+
+### Bug Fixes
+- **notifications:** Catch Exception when download icon image of pinpoint notification ([#2873](https://github.com/aws-amplify/amplify-android/issues/2873))
+
+[See all changes between 2.21.0 and 2.21.1](https://github.com/aws-amplify/amplify-android/compare/release_v2.21.0...release_v2.21.1)
+
+## [Release 2.21.0](https://github.com/aws-amplify/amplify-android/releases/tag/release_v2.21.0)
+
+### Features
+- **storage:** add delimiter support ([#2871](https://github.com/aws-amplify/amplify-android/issues/2871))
+
+### Bug Fixes
+- **storage:** Remove unused foreground service permission ([#2877](https://github.com/aws-amplify/amplify-android/issues/2877))
+
+[See all changes between 2.20.0 and 2.21.0](https://github.com/aws-amplify/amplify-android/compare/release_v2.20.0...release_v2.21.0)
+
+## [Release 2.20.0](https://github.com/aws-amplify/amplify-android/releases/tag/release_v2.20.0)
+
+### Features
+- **storage:** add object existence validation option to get presigned url ([#2848](https://github.com/aws-amplify/amplify-android/issues/2848))
+
+### Bug Fixes
+- **notifications:** Prevent notifications text from being truncated ([#2856](https://github.com/aws-amplify/amplify-android/issues/2856))
+- **api:** Don't prevent subscribing with API_KEY when there is also an owner-based rule ([#2828](https://github.com/aws-amplify/amplify-android/issues/2828))
+
+### Miscellaneous
+- **analytics:** Update junit ktx dependency ([#2859](https://github.com/aws-amplify/amplify-android/issues/2859))
+- **auth:** Fix tests by using proper birthdate attribute according to Cognito ([#2865](https://github.com/aws-amplify/amplify-android/issues/2865))
+- **all:** Remove ignored tests ([#2867](https://github.com/aws-amplify/amplify-android/issues/2867))
+
+[See all changes between 2.19.1 and 2.20.0](https://github.com/aws-amplify/amplify-android/compare/release_v2.19.1...release_v2.20.0)
+
+## [Release 2.19.1](https://github.com/aws-amplify/amplify-android/releases/tag/release_v2.19.1)
+
+### Bug Fixes
+- **auth:** Fix isSignedIn states ([#2830](https://github.com/aws-amplify/amplify-android/issues/2830))
+- **DataStore:** should not crash on missing version metadata ([#2849](https://github.com/aws-amplify/amplify-android/issues/2849))
+
+[See all changes between 2.19.0 and 2.19.1](https://github.com/aws-amplify/amplify-android/compare/release_v2.19.0...release_v2.19.1)
+
+## [Release 2.19.0](https://github.com/aws-amplify/amplify-android/releases/tag/release_v2.19.0)
+
+### Miscellaneous
+- DataStore Model Sync Parallelization ([#2808](https://github.com/aws-amplify/amplify-android/issues/2808))
+
+[See all changes between 2.18.0 and 2.19.0](https://github.com/aws-amplify/amplify-android/compare/release_v2.18.0...release_v2.19.0)
+
+## [Release 2.18.0](https://github.com/aws-amplify/amplify-android/releases/tag/release_v2.18.0)
+
+### Features
+- **all:** Update to Kotlin SDK 1.2.8 (includes OkHttp Update) ([#2813](https://github.com/aws-amplify/amplify-android/issues/2813))
+
+### Bug Fixes
+- **auth:** Fix HostedUI signout cancellation issue ([#2834](https://github.com/aws-amplify/amplify-android/issues/2834))
+- **auth:** Fix parsing of REQUIRES_UPPERCASE/REQUIRES_LOWERCASE password settings in Gen1 ([#2836](https://github.com/aws-amplify/amplify-android/issues/2836))
+
+[See all changes between 2.17.0 and 2.18.0](https://github.com/aws-amplify/amplify-android/compare/release_v2.17.0...release_v2.18.0)
+
+## [Release 2.17.0](https://github.com/aws-amplify/amplify-android/releases/tag/release_v2.17.0)
+
+### Features
+- **core:** Add APIs to lazily evaluate log statements ([#2811](https://github.com/aws-amplify/amplify-android/issues/2811))
+
+### Bug Fixes
+- **analytics:** Make Analytics Options Builder build function public for Java to call ([#2804](https://github.com/aws-amplify/amplify-android/issues/2804))
+- **predictions:** Ignore unknown events from liveness websocket ([#2736](https://github.com/aws-amplify/amplify-android/issues/2736))
+- **api:** Fix the handling of exceptions when subscribing with Kotlin Facade ([#2821](https://github.com/aws-amplify/amplify-android/issues/2821))
+- **auth:** Prevent Rare Deadlock Scenario ([#2822](https://github.com/aws-amplify/amplify-android/issues/2822))
+- **api:** Add missing JvmStatic annotations ([#2823](https://github.com/aws-amplify/amplify-android/issues/2823))
+
+[See all changes between 2.16.1 and 2.17.0](https://github.com/aws-amplify/amplify-android/compare/release_v2.16.1...release_v2.17.0)
+
+## [Release 2.16.1](https://github.com/aws-amplify/amplify-android/releases/tag/release_v2.16.1)
+
+### Bug Fixes
+- **logging:** Fix unexpected behavior of bulkDelete action ([#2772](https://github.com/aws-amplify/amplify-android/issues/2772)) ([#2776](https://github.com/aws-amplify/amplify-android/issues/2776))
+- **auth:** Fix timestamp issue with v1 to v2 migration ([#2799](https://github.com/aws-amplify/amplify-android/issues/2799))
+- **datastore:** Reconcile batch process optimization bug [#2727](https://github.com/aws-amplify/amplify-android/issues/2727) ([#2749](https://github.com/aws-amplify/amplify-android/issues/2749))
+- **Storage:** Prevent InputStream errors from calling back more than once ([#2742](https://github.com/aws-amplify/amplify-android/issues/2742))
+- **datastore:** Prevent datastore error with single auth rule when Mu… ([#2760](https://github.com/aws-amplify/amplify-android/issues/2760))
+- **datastore:** List errors that are returned from AppSync ([#2801](https://github.com/aws-amplify/amplify-android/issues/2801))
+
+[See all changes between 2.16.0 and 2.16.1](https://github.com/aws-amplify/amplify-android/compare/release_v2.16.0...release_v2.16.1)
+
+## [Release 2.16.0](https://github.com/aws-amplify/amplify-android/releases/tag/release_v2.16.0)
+
+### Features
+- **storage:** Gen2 Storage API ([#2758](https://github.com/aws-amplify/amplify-android/issues/2758))
+- **all:** Add Gen2 Config ([#2771](https://github.com/aws-amplify/amplify-android/issues/2771))
+
+[See all changes between 2.15.2 and 2.16.0](https://github.com/aws-amplify/amplify-android/compare/release_v2.15.2...release_v2.16.0)
+
+## [Release 2.15.2](https://github.com/aws-amplify/amplify-android/releases/tag/release_v2.15.2)
+
+### Bug Fixes
+- **auth:** Fix incorrect statement about when userId is returned in AuthSignUpResult ([#2782](https://github.com/aws-amplify/amplify-android/issues/2782))
+- **storage:** Fix multiple instances of TransferDB leading to SQLiteDatabaseLockedException ([#2786](https://github.com/aws-amplify/amplify-android/issues/2786))
+
+[See all changes between 2.15.1 and 2.15.2](https://github.com/aws-amplify/amplify-android/compare/release_v2.15.1...release_v2.15.2)
+
+## [Release 2.15.1](https://github.com/aws-amplify/amplify-android/releases/tag/release_v2.15.1)
+
+### Bug Fixes
+- **auth:** Fix issue where unauthenticated logins caused 401 because refresh caused new credentials to be created ([#2752](https://github.com/aws-amplify/amplify-android/issues/2752))
+
+[See all changes between 2.15.0 and 2.15.1](https://github.com/aws-amplify/amplify-android/compare/release_v2.15.0...release_v2.15.1)
+
+## [Release 2.15.0](https://github.com/aws-amplify/amplify-android/releases/tag/release_v2.15.0)
+
+### Features
+- **auth:** Expose AuthConfiguration directly ([#2740](https://github.com/aws-amplify/amplify-android/issues/2740))
+
+### Miscellaneous
+- fix(auth) Add underlying cause to fetchAuthSession error ([#2750](https://github.com/aws-amplify/amplify-android/issues/2750))
+
+[See all changes between 2.14.13 and 2.15.0](https://github.com/aws-amplify/amplify-android/compare/release_v2.14.13...release_v2.15.0)
+
+## [Release 2.14.13](https://github.com/aws-amplify/amplify-android/releases/tag/release_v2.14.13)
+
+### Bug Fixes
+- **analytics:** Set start time before generating session ID ([#2747](https://github.com/aws-amplify/amplify-android/issues/2747))
+
+[See all changes between 2.14.12 and 2.14.13](https://github.com/aws-amplify/amplify-android/compare/release_v2.14.12...release_v2.14.13)
+
+## [Release 2.14.12](https://github.com/aws-amplify/amplify-android/releases/tag/release_v2.14.12)
+
+### Bug Fixes
+- **Predictions:** Fix Liveness InvalidSignatureException ([#2729](https://github.com/aws-amplify/amplify-android/issues/2729))
+
+[See all changes between 2.14.11 and 2.14.12](https://github.com/aws-amplify/amplify-android/compare/release_v2.14.11...release_v2.14.12)
+
+## [Release 2.14.11](https://github.com/aws-amplify/amplify-android/releases/tag/release_v2.14.11)
+
+### Bug Fixes
+- **storage:** upload/download fewer files in storage stress test to avoid S3 throttling exception ([#2712](https://github.com/aws-amplify/amplify-android/issues/2712))
+- **datastore:** Remove unnecessary synchronized causing subscription slowness ([#2718](https://github.com/aws-amplify/amplify-android/issues/2718), [#2719](https://github.com/aws-amplify/amplify-android/issues/2719))
+- **datastore:** Switch to BFS in Join Builder for Alias, fixes - [#2488](https://github.com/aws-amplify/amplify-android/issues/2488) ([#2693](https://github.com/aws-amplify/amplify-android/issues/2693))
+
+[See all changes between 2.14.10 and 2.14.11](https://github.com/aws-amplify/amplify-android/compare/release_v2.14.10...release_v2.14.11)
+
 ## [Release 2.14.10](https://github.com/aws-amplify/amplify-android/releases/tag/release_v2.14.10)
 
 ### Features

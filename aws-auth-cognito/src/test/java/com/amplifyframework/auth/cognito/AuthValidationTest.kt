@@ -30,13 +30,13 @@ import com.amplifyframework.auth.result.AuthSignInResult
 import com.amplifyframework.core.Consumer
 import com.amplifyframework.logging.Logger
 import com.amplifyframework.statemachine.codegen.data.AmplifyCredential
-import com.amplifyframework.statemachine.codegen.data.AuthConfiguration
 import com.amplifyframework.statemachine.codegen.data.CognitoUserPoolTokens
 import com.amplifyframework.statemachine.codegen.data.DeviceMetadata
 import com.amplifyframework.statemachine.codegen.data.SignedOutData
 import com.amplifyframework.statemachine.codegen.states.AuthState
 import com.amplifyframework.statemachine.codegen.states.AuthenticationState
 import com.amplifyframework.statemachine.codegen.states.AuthorizationState
+import com.amplifyframework.statemachine.codegen.states.SignUpState
 import io.mockk.clearMocks
 import io.mockk.coEvery
 import io.mockk.every
@@ -122,7 +122,8 @@ class AuthValidationTest {
         environment,
         initialState = AuthState.Configured(
             authNState = AuthenticationState.SignedOut(signedOutData = SignedOutData()),
-            authZState = AuthorizationState.Configured()
+            authZState = AuthorizationState.Configured(),
+            authSignUpState = SignUpState.NotStarted()
         )
     )
 

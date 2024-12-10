@@ -28,8 +28,9 @@ public class StorageDownloadFileOptions extends StorageOptions {
      * attributes from builder instance.
      * @param builder the builder with configured attributes
      */
+    @SuppressWarnings("deprecation")
     protected StorageDownloadFileOptions(final Builder<?> builder) {
-        super(builder.getAccessLevel(), builder.getTargetIdentityId());
+        super(builder.getAccessLevel(), builder.getTargetIdentityId(), builder.getBucket());
     }
 
     /**
@@ -55,10 +56,12 @@ public class StorageDownloadFileOptions extends StorageOptions {
      *         values in the provided options
      */
     @NonNull
+    @SuppressWarnings("deprecation")
     public static Builder<?> from(@NonNull final StorageDownloadFileOptions options) {
         return builder()
-            .accessLevel(options.getAccessLevel())
-            .targetIdentityId(options.getTargetIdentityId());
+                .accessLevel(options.getAccessLevel())
+                .targetIdentityId(options.getTargetIdentityId())
+                .bucket(options.getBucket());
     }
 
     /**
@@ -74,6 +77,7 @@ public class StorageDownloadFileOptions extends StorageOptions {
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("deprecation")
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
@@ -82,7 +86,8 @@ public class StorageDownloadFileOptions extends StorageOptions {
         } else {
             StorageDownloadFileOptions that = (StorageDownloadFileOptions) obj;
             return ObjectsCompat.equals(getAccessLevel(), that.getAccessLevel()) &&
-                    ObjectsCompat.equals(getTargetIdentityId(), that.getTargetIdentityId());
+                    ObjectsCompat.equals(getTargetIdentityId(), that.getTargetIdentityId()) &&
+                    ObjectsCompat.equals(getBucket(), that.getBucket());
         }
     }
 
@@ -90,10 +95,12 @@ public class StorageDownloadFileOptions extends StorageOptions {
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("deprecation")
     public int hashCode() {
         return ObjectsCompat.hash(
                 getAccessLevel(),
-                getTargetIdentityId()
+                getTargetIdentityId(),
+                getBucket()
         );
     }
 
@@ -102,11 +109,13 @@ public class StorageDownloadFileOptions extends StorageOptions {
      */
     @NonNull
     @Override
+    @SuppressWarnings("deprecation")
     public String toString() {
         return "StorageDownloadFileOptions {" +
-            "accessLevel=" + getAccessLevel() +
-            ", targetIdentityId=" + getTargetIdentityId() +
-            '}';
+                "accessLevel=" + getAccessLevel() +
+                ", targetIdentityId=" + getTargetIdentityId() +
+                ", bucket=" + getBucket() +
+                '}';
     }
 
     /**

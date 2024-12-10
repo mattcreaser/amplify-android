@@ -26,10 +26,12 @@ import com.amplifyframework.storage.options.StorageGetUrlOptions;
  */
 public final class AWSS3StorageGetPresignedUrlOptions extends StorageGetUrlOptions {
     private final boolean useAccelerationMode;
+    private final boolean validateObjectExistence;
 
     private AWSS3StorageGetPresignedUrlOptions(final Builder builder) {
         super(builder);
         this.useAccelerationMode = builder.useAccelerateEndpoint;
+        this.validateObjectExistence = builder.validateObjectExistence;
     }
 
     /**
@@ -54,11 +56,15 @@ public final class AWSS3StorageGetPresignedUrlOptions extends StorageGetUrlOptio
      *         values in the provided options
      */
     @NonNull
+    @SuppressWarnings("deprecation")
     public static Builder from(@NonNull AWSS3StorageGetPresignedUrlOptions options) {
         return builder()
             .accessLevel(options.getAccessLevel())
             .targetIdentityId(options.getTargetIdentityId())
-            .expires(options.getExpires());
+            .expires(options.getExpires())
+            .setValidateObjectExistence(options.getValidateObjectExistence())
+            .expires(options.getExpires())
+            .bucket(options.getBucket());
     }
 
     /**
@@ -79,7 +85,18 @@ public final class AWSS3StorageGetPresignedUrlOptions extends StorageGetUrlOptio
         return useAccelerationMode;
     }
 
+    /**
+     * Gets the flag to determine whether to validate whether an S3 object exists.
+     * Note: Setting this to `true` will result in a latency cost since confirming the existence
+     * of the underlying S3 object will likely require a round-trip network call.
+     * @return boolean flag
+     */
+    public boolean getValidateObjectExistence() {
+        return validateObjectExistence;
+    }
+
     @Override
+    @SuppressWarnings("deprecation")
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
@@ -89,26 +106,34 @@ public final class AWSS3StorageGetPresignedUrlOptions extends StorageGetUrlOptio
             AWSS3StorageGetPresignedUrlOptions that = (AWSS3StorageGetPresignedUrlOptions) obj;
             return ObjectsCompat.equals(getAccessLevel(), that.getAccessLevel()) &&
                     ObjectsCompat.equals(getTargetIdentityId(), that.getTargetIdentityId()) &&
-                    ObjectsCompat.equals(getExpires(), that.getExpires());
+                    ObjectsCompat.equals(getExpires(), that.getExpires()) &&
+                    ObjectsCompat.equals(getBucket(), that.getBucket()) &&
+                    ObjectsCompat.equals(getValidateObjectExistence(), that.getValidateObjectExistence());
         }
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public int hashCode() {
         return ObjectsCompat.hash(
                 getAccessLevel(),
                 getTargetIdentityId(),
-                getExpires()
+                getExpires(),
+                getValidateObjectExistence(),
+                getBucket()
         );
     }
 
     @NonNull
     @Override
+    @SuppressWarnings("deprecation")
     public String toString() {
         return "AWSS3StorageGetPresignedUrlOptions {" +
                 "accessLevel=" + getAccessLevel() +
                 ", targetIdentityId=" + getTargetIdentityId() +
                 ", expires=" + getExpires() +
+                ", validateObjectExistence=" + getValidateObjectExistence() +
+                ", bucket=" + getBucket() +
                 '}';
     }
 
@@ -119,6 +144,7 @@ public final class AWSS3StorageGetPresignedUrlOptions extends StorageGetUrlOptio
      */
     public static final class Builder extends StorageGetUrlOptions.Builder<Builder> {
         private boolean useAccelerateEndpoint;
+        private boolean validateObjectExistence;
 
         /**
          * Configure to use acceleration mode on new StorageGetPresignedUrlOptions instances.
@@ -127,6 +153,16 @@ public final class AWSS3StorageGetPresignedUrlOptions extends StorageGetUrlOptio
          */
         public Builder setUseAccelerateEndpoint(boolean useAccelerateEndpoint) {
             this.useAccelerateEndpoint = useAccelerateEndpoint;
+            return this;
+        }
+
+        /**
+         * Configure to validate object existence flag on new StorageGetPresignedUrlOptions instances.
+         * @param validateObjectExistence boolean flag to represent flag to validate object existence.
+         * @return Current Builder instance for fluent chaining
+         */
+        public Builder setValidateObjectExistence(boolean validateObjectExistence) {
+            this.validateObjectExistence = validateObjectExistence;
             return this;
         }
 

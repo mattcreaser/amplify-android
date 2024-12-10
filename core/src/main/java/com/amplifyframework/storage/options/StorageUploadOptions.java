@@ -38,9 +38,10 @@ public abstract class StorageUploadOptions extends StorageOptions {
      * @param <B>     the type of builder to chain with
      * @param <O>     the type of StorageUploadOptions
      */
+    @SuppressWarnings("deprecation")
     protected <B extends Builder<B, O>, O extends StorageUploadOptions>
         StorageUploadOptions(final Builder<B, O> builder) {
-        super(builder.getAccessLevel(), builder.getTargetIdentityId());
+        super(builder.getAccessLevel(), builder.getTargetIdentityId(), builder.getBucket());
         this.contentType = builder.getContentType();
         this.metadata = builder.getMetadata();
     }
@@ -67,6 +68,7 @@ public abstract class StorageUploadOptions extends StorageOptions {
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("deprecation")
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
@@ -77,7 +79,8 @@ public abstract class StorageUploadOptions extends StorageOptions {
             return ObjectsCompat.equals(getAccessLevel(), that.getAccessLevel()) &&
                     ObjectsCompat.equals(getTargetIdentityId(), that.getTargetIdentityId()) &&
                     ObjectsCompat.equals(getContentType(), that.getContentType()) &&
-                    ObjectsCompat.equals(getMetadata(), that.getMetadata());
+                    ObjectsCompat.equals(getMetadata(), that.getMetadata()) &&
+                    ObjectsCompat.equals(getBucket(), that.getBucket());
         }
     }
 
@@ -85,12 +88,14 @@ public abstract class StorageUploadOptions extends StorageOptions {
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("deprecation")
     public int hashCode() {
         return ObjectsCompat.hash(
                 getAccessLevel(),
                 getTargetIdentityId(),
                 getContentType(),
-                getMetadata()
+                getMetadata(),
+                getBucket()
         );
     }
 
@@ -99,12 +104,14 @@ public abstract class StorageUploadOptions extends StorageOptions {
      */
     @NonNull
     @Override
+    @SuppressWarnings("deprecation")
     public String toString() {
         return "StorageUploadOptions {" +
                 "accessLevel=" + getAccessLevel() +
                 ", targetIdentityId=" + getTargetIdentityId() +
                 ", contentType=" + getContentType() +
                 ", metadata=" + getMetadata() +
+                ", bucket=" + getBucket() +
                 '}';
     }
 

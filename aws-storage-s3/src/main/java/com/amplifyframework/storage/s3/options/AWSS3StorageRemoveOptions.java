@@ -53,10 +53,12 @@ public final class AWSS3StorageRemoveOptions extends StorageRemoveOptions {
      *         values in the provided options
      */
     @NonNull
+    @SuppressWarnings("deprecation")
     public static Builder from(@NonNull final AWSS3StorageRemoveOptions options) {
         return builder()
-            .accessLevel(options.getAccessLevel())
-            .targetIdentityId(options.getTargetIdentityId());
+                .accessLevel(options.getAccessLevel())
+                .targetIdentityId(options.getTargetIdentityId())
+                .bucket(options.getBucket());
     }
 
     /**
@@ -69,6 +71,7 @@ public final class AWSS3StorageRemoveOptions extends StorageRemoveOptions {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
@@ -77,24 +80,29 @@ public final class AWSS3StorageRemoveOptions extends StorageRemoveOptions {
         } else {
             AWSS3StorageRemoveOptions that = (AWSS3StorageRemoveOptions) obj;
             return ObjectsCompat.equals(getAccessLevel(), that.getAccessLevel()) &&
-                    ObjectsCompat.equals(getTargetIdentityId(), that.getTargetIdentityId());
+                    ObjectsCompat.equals(getTargetIdentityId(), that.getTargetIdentityId()) &&
+                    ObjectsCompat.equals(getBucket(), that.getBucket());
         }
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public int hashCode() {
         return ObjectsCompat.hash(
                 getAccessLevel(),
-                getTargetIdentityId()
+                getTargetIdentityId(),
+                getBucket()
         );
     }
 
     @NonNull
     @Override
+    @SuppressWarnings("deprecation")
     public String toString() {
         return "AWSS3StorageRemoveOptions {" +
                 "accessLevel=" + getAccessLevel() +
                 ", targetIdentityId=" + getTargetIdentityId() +
+                ", bucket=" + getBucket() +
                 '}';
     }
 

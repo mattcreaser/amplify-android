@@ -41,13 +41,11 @@ def getRepositoryPassword() {
     return hasProperty('SONATYPE_NEXUS_PASSWORD') ? SONATYPE_NEXUS_PASSWORD : ""
 }
 
+Boolean useLegacyPublishingConventions(Project project) {
+    return !project.name.startsWith("apollo")
+}
+
 afterEvaluate { project ->
-    task androidSourcesJar(type: Jar) {
-        classifier = 'sources'
-        from android.sourceSets.main.java.source
-    }
-
-
     publishing {
         publications {
             library(MavenPublication) {
@@ -55,12 +53,11 @@ afterEvaluate { project ->
                 artifactId POM_ARTIFACT_ID
                 version VERSION_NAME
 
-                artifact("${buildDir}/outputs/aar/${artifactId}-release.aar")
-                if (project.getPlugins().hasPlugin('com.android.application') ||
-                        project.getPlugins().hasPlugin('com.android.library')) {
-                    artifact(androidSourcesJar)
-                } else {
-                    artifact(sourcesJar)
+                project.pluginManager.withPlugin("com.android.library") {
+                    from(components.named("release").get())
+                }
+                project.pluginManager.withPlugin("java-library") {
+                    from(components.named("java").get())
                 }
 
                 pom {
@@ -91,16 +88,14 @@ afterEvaluate { project ->
                         }
                     }
 
-                    withXml {
-                        def dependenciesNode = asNode().appendNode('dependencies')
-                        // Note that this only handles implementation
-                        // dependencies. In the future, may need to add api,
-                        // etc.
-                        configurations.implementation.allDependencies.each {
-                            def dependencyNode = dependenciesNode.appendNode('dependency')
-                            dependencyNode.appendNode('groupId', it.group)
-                            dependencyNode.appendNode('artifactId', it.name)
-                            dependencyNode.appendNode('version', it.version)
+                    if (useLegacyPublishingConventions(project)) {
+                        withXml {
+                            // Remove the scope information for all dependencies. This puts
+                            // everything at "compile" scope, which matches the way Amplify V2 has been
+                            // published historically. For v3 we should remove this and include the
+                            // scope information for our dependencies.
+                            def dependencies = asNode().get('dependencies').first()
+                            dependencies.each { it.remove(it.get('scope')) }
                         }
                     }
                 }
@@ -127,5 +122,13 @@ afterEvaluate { project ->
             useInMemoryPgpKeys(keyId, signingKey, signingPassword)
         }
         sign publishing.publications.library
+    }
+
+    if (useLegacyPublishingConventions(project)) {
+        // Turn off Gradle metadata. This is to maintain compatibility with the way Amplify V2 has
+        // been published historically. For v3 we should remove this and publish the gradle metadata.
+        tasks.withType(GenerateModuleMetadata).configureEach {
+            enabled = false
+        }
     }
 }

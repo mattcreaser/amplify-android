@@ -18,9 +18,14 @@
 package com.amplifyframework.auth.cognito.featuretest.serializers
 
 import aws.sdk.kotlin.services.cognitoidentity.model.CognitoIdentityException
+import aws.sdk.kotlin.services.cognitoidentity.model.TooManyRequestsException
 import aws.sdk.kotlin.services.cognitoidentityprovider.model.CodeMismatchException
 import aws.sdk.kotlin.services.cognitoidentityprovider.model.CognitoIdentityProviderException
+import aws.sdk.kotlin.services.cognitoidentityprovider.model.InvalidParameterException
 import aws.sdk.kotlin.services.cognitoidentityprovider.model.NotAuthorizedException
+import aws.sdk.kotlin.services.cognitoidentityprovider.model.ResourceNotFoundException
+import aws.sdk.kotlin.services.cognitoidentityprovider.model.UserNotFoundException
+import aws.sdk.kotlin.services.cognitoidentityprovider.model.UsernameExistsException
 import com.amplifyframework.auth.exceptions.UnknownException
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
@@ -38,6 +43,21 @@ private data class CognitoExceptionSurrogate(
             NotAuthorizedException::class.java.simpleName -> NotAuthorizedException.invoke {
                 message = errorMessage
             } as T
+            ResourceNotFoundException::class.java.simpleName -> ResourceNotFoundException.invoke {
+                message = errorMessage
+            } as T
+            TooManyRequestsException::class.java.simpleName -> TooManyRequestsException.invoke {
+                message = errorMessage
+            } as T
+            UsernameExistsException::class.java.simpleName -> UsernameExistsException.invoke {
+                message = errorMessage
+            } as T
+            InvalidParameterException::class.java.simpleName -> InvalidParameterException.invoke {
+                message = errorMessage
+            } as T
+            UserNotFoundException::class.java.simpleName -> UserNotFoundException.invoke {
+                message = errorMessage
+            } as T
             UnknownException::class.java.simpleName -> UnknownException(message = errorMessage ?: "") as T
             CodeMismatchException::class.java.simpleName -> CodeMismatchException.invoke {
                 message = errorMessage
@@ -53,6 +73,10 @@ private data class CognitoExceptionSurrogate(
         fun <T> toSurrogate(exception: T): CognitoExceptionSurrogate {
             return when (exception) {
                 is CognitoIdentityProviderException -> CognitoExceptionSurrogate(
+                    exception!!::class.java.simpleName,
+                    exception.message
+                )
+                is CognitoIdentityException -> CognitoExceptionSurrogate(
                     exception!!::class.java.simpleName,
                     exception.message
                 )

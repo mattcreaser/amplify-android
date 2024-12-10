@@ -13,7 +13,15 @@
  * permissions and limitations under the License.
  */
 
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        google()
+    }
+}
+
 dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         maven {
             url = uri("https://aws.oss.sonatype.org/content/repositories/snapshots/")
@@ -52,3 +60,9 @@ include(":maplibre-adapter")
 include(":aws-pinpoint-core")
 include(":aws-push-notifications-pinpoint-common")
 include(":aws-logging-cloudwatch")
+
+// Apollo Extensions
+include(":apollo-appsync")
+include(":apollo-appsync-amplify")
+project(":apollo-appsync").projectDir = file("apollo/apollo-appsync")
+project(":apollo-appsync-amplify").projectDir = file("apollo/apollo-appsync-amplify")

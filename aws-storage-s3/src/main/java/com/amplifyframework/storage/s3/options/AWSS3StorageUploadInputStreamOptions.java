@@ -68,13 +68,15 @@ public final class AWSS3StorageUploadInputStreamOptions extends StorageUploadInp
      *         values in the provided options
      */
     @NonNull
+    @SuppressWarnings("deprecation")
     public static Builder from(@NonNull final AWSS3StorageUploadInputStreamOptions options) {
         return builder()
                 .accessLevel(options.getAccessLevel())
                 .targetIdentityId(options.getTargetIdentityId())
                 .contentType(options.getContentType())
                 .serverSideEncryption(options.getServerSideEncryption())
-                .metadata(options.getMetadata());
+                .metadata(options.getMetadata())
+                .bucket(options.getBucket());
     }
 
     /**
@@ -96,6 +98,7 @@ public final class AWSS3StorageUploadInputStreamOptions extends StorageUploadInp
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
@@ -107,23 +110,27 @@ public final class AWSS3StorageUploadInputStreamOptions extends StorageUploadInp
                     ObjectsCompat.equals(getTargetIdentityId(), that.getTargetIdentityId()) &&
                     ObjectsCompat.equals(getContentType(), that.getContentType()) &&
                     ObjectsCompat.equals(getServerSideEncryption(), that.getServerSideEncryption()) &&
-                    ObjectsCompat.equals(getMetadata(), that.getMetadata());
+                    ObjectsCompat.equals(getMetadata(), that.getMetadata()) &&
+                    ObjectsCompat.equals(getBucket(), that.getBucket());
         }
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public int hashCode() {
         return ObjectsCompat.hash(
                 getAccessLevel(),
                 getTargetIdentityId(),
                 getContentType(),
                 getServerSideEncryption(),
-                getMetadata()
+                getMetadata(),
+                getBucket()
         );
     }
 
     @NonNull
     @Override
+    @SuppressWarnings("deprecation")
     public String toString() {
         return "AWSS3StorageUploadInputStreamOptions {" +
                 "accessLevel=" + getAccessLevel() +
@@ -131,6 +138,7 @@ public final class AWSS3StorageUploadInputStreamOptions extends StorageUploadInp
                 ", contentType=" + getContentType() +
                 ", serverSideEncryption=" + getServerSideEncryption().getName() +
                 ", metadata=" + getMetadata() +
+                ", bucket=" + getBucket() +
                 '}';
     }
 

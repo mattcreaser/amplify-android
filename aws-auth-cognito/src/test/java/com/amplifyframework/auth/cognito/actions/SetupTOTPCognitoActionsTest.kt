@@ -24,12 +24,13 @@ import aws.sdk.kotlin.services.cognitoidentityprovider.model.VerifySoftwareToken
 import aws.sdk.kotlin.services.cognitoidentityprovider.model.VerifySoftwareTokenResponseType
 import aws.sdk.kotlin.services.cognitoidentityprovider.verifySoftwareToken
 import com.amplifyframework.auth.cognito.AWSCognitoAuthService
+import com.amplifyframework.auth.cognito.AuthConfiguration
 import com.amplifyframework.auth.cognito.AuthEnvironment
 import com.amplifyframework.auth.cognito.StoreClientBehavior
 import com.amplifyframework.logging.Logger
 import com.amplifyframework.statemachine.EventDispatcher
 import com.amplifyframework.statemachine.StateMachineEvent
-import com.amplifyframework.statemachine.codegen.data.AuthConfiguration
+import com.amplifyframework.statemachine.codegen.data.SignInMethod
 import com.amplifyframework.statemachine.codegen.data.SignInTOTPSetupData
 import com.amplifyframework.statemachine.codegen.events.SetupTOTPEvent
 import io.mockk.coEvery
@@ -37,7 +38,6 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
 import kotlin.test.assertEquals
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
@@ -45,13 +45,12 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
-@OptIn(ExperimentalCoroutinesApi::class)
 class SetupTOTPCognitoActionsTest {
 
     private val configuration = mockk<AuthConfiguration>()
     private val cognitoAuthService = mockk<AWSCognitoAuthService>()
     private val credentialStoreClient = mockk<StoreClientBehavior>()
-    private val logger = mockk<Logger>()
+    private val logger = mockk<Logger>(relaxed = true)
     private val cognitoIdentityProviderClientMock = mockk<CognitoIdentityProviderClient>()
     private val dispatcher = mockk<EventDispatcher>()
 
@@ -61,7 +60,6 @@ class SetupTOTPCognitoActionsTest {
 
     @Before
     fun setup() {
-        every { logger.verbose(any()) }.answers {}
         every { dispatcher.send(capture(capturedEvent)) }.answers { }
         every { cognitoAuthService.cognitoIdentityProviderClient }.answers { cognitoIdentityProviderClientMock }
         authEnvironment = AuthEnvironment(
@@ -90,13 +88,19 @@ class SetupTOTPCognitoActionsTest {
         }
         val initiateAction = SetupTOTPCognitoActions.initiateTOTPSetup(
             SetupTOTPEvent.EventType.SetupTOTP(
-                SignInTOTPSetupData("", "SESSION", "USERNAME")
+                SignInTOTPSetupData("", "SESSION", "USERNAME"),
+                mapOf("MFAS_CAN_SETUP" to "SOFTWARE_TOKEN_MFA"),
+                signInMethod = SignInMethod.ApiBased(SignInMethod.ApiBased.AuthType.USER_SRP_AUTH)
             )
         )
         initiateAction.execute(dispatcher, authEnvironment)
 
         val expectedEvent = SetupTOTPEvent(
-            SetupTOTPEvent.EventType.WaitForAnswer(SignInTOTPSetupData(secretCode, session, username))
+            SetupTOTPEvent.EventType.WaitForAnswer(
+                SignInTOTPSetupData(secretCode, session, username),
+                mapOf("MFAS_CAN_SETUP" to "SOFTWARE_TOKEN_MFA"),
+                signInMethod = SignInMethod.ApiBased(SignInMethod.ApiBased.AuthType.USER_SRP_AUTH)
+            )
         )
         assertEquals(
             expectedEvent.type,
@@ -127,13 +131,20 @@ class SetupTOTPCognitoActionsTest {
         }
         val initiateAction = SetupTOTPCognitoActions.initiateTOTPSetup(
             SetupTOTPEvent.EventType.SetupTOTP(
-                SignInTOTPSetupData("", "SESSION", "USERNAME")
+                SignInTOTPSetupData("", "SESSION", "USERNAME"),
+                mapOf("MFAS_CAN_SETUP" to "SOFTWARE_TOKEN_MFA"),
+                signInMethod = SignInMethod.ApiBased(SignInMethod.ApiBased.AuthType.USER_SRP_AUTH)
             )
         )
         initiateAction.execute(dispatcher, authEnvironment)
 
         val expectedEvent = SetupTOTPEvent(
-            SetupTOTPEvent.EventType.ThrowAuthError(serviceException, "USERNAME", "SESSION")
+            SetupTOTPEvent.EventType.ThrowAuthError(
+                serviceException,
+                "USERNAME",
+                "SESSION",
+                SignInMethod.ApiBased(SignInMethod.ApiBased.AuthType.USER_SRP_AUTH)
+            )
         )
         assertEquals(
             expectedEvent.type,
@@ -164,7 +175,9 @@ class SetupTOTPCognitoActionsTest {
             }
         }
         val expectedEvent = SetupTOTPEvent(
-            SetupTOTPEvent.EventType.RespondToAuthChallenge(username, session)
+            SetupTOTPEvent.EventType.RespondToAuthChallenge(
+                username, session, SignInMethod.ApiBased(SignInMethod.ApiBased.AuthType.USER_SRP_AUTH)
+            )
         )
 
         val verifyChallengeAnswerAction = SetupTOTPCognitoActions.verifyChallengeAnswer(
@@ -172,7 +185,8 @@ class SetupTOTPCognitoActionsTest {
                 answer,
                 username,
                 session,
-                friendlyDeviceName
+                friendlyDeviceName,
+                SignInMethod.ApiBased(SignInMethod.ApiBased.AuthType.USER_SRP_AUTH)
             )
         )
         verifyChallengeAnswerAction.execute(dispatcher, authEnvironment)
@@ -212,7 +226,8 @@ class SetupTOTPCognitoActionsTest {
             SetupTOTPEvent.EventType.ThrowAuthError(
                 Exception("An unknown service error has occurred"),
                 "USERNAME",
-                "SESSION"
+                "SESSION",
+                SignInMethod.ApiBased(SignInMethod.ApiBased.AuthType.USER_SRP_AUTH)
             )
         )
 
@@ -221,7 +236,8 @@ class SetupTOTPCognitoActionsTest {
                 answer,
                 username,
                 session,
-                friendlyDeviceName
+                friendlyDeviceName,
+                SignInMethod.ApiBased(SignInMethod.ApiBased.AuthType.USER_SRP_AUTH)
             )
         )
         verifyChallengeAnswerAction.execute(dispatcher, authEnvironment)
@@ -258,7 +274,12 @@ class SetupTOTPCognitoActionsTest {
             throw serviceException
         }
         val expectedEvent = SetupTOTPEvent(
-            SetupTOTPEvent.EventType.ThrowAuthError(serviceException, "USERNAME", "SESSION")
+            SetupTOTPEvent.EventType.ThrowAuthError(
+                serviceException,
+                "USERNAME",
+                "SESSION",
+                SignInMethod.ApiBased(SignInMethod.ApiBased.AuthType.USER_SRP_AUTH)
+            )
         )
 
         val verifyChallengeAnswerAction = SetupTOTPCognitoActions.verifyChallengeAnswer(
@@ -266,7 +287,8 @@ class SetupTOTPCognitoActionsTest {
                 answer,
                 username,
                 session,
-                friendlyDeviceName
+                friendlyDeviceName,
+                SignInMethod.ApiBased(SignInMethod.ApiBased.AuthType.USER_SRP_AUTH)
             )
         )
         verifyChallengeAnswerAction.execute(dispatcher, authEnvironment)

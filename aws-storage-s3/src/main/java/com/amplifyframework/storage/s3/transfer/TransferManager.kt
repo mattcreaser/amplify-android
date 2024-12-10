@@ -20,7 +20,6 @@ import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import androidx.work.WorkManager
-import aws.sdk.kotlin.services.s3.S3Client
 import aws.sdk.kotlin.services.s3.model.ObjectCannedAcl
 import com.amplifyframework.core.Amplify
 import com.amplifyframework.core.category.CategoryType
@@ -43,15 +42,16 @@ import kotlin.math.min
  * download files. It inserts upload and download records into the database and
  * enqueue a WorkRequest for WorkManager to service the transfer
  */
-internal class TransferManager @JvmOverloads constructor(
+internal class TransferManager(
     context: Context,
-    s3: S3Client,
+    clientProvider: StorageTransferClientProvider,
     private val pluginKey: String,
     private val workManager: WorkManager = WorkManager.getInstance(context)
 ) {
 
     private val transferDB: TransferDB = TransferDB.getInstance(context)
-    val transferStatusUpdater: TransferStatusUpdater = TransferStatusUpdater.getInstance(context)
+    val transferStatusUpdater: TransferStatusUpdater = TransferStatusUpdater(transferDB)
+
     private val logger =
         Amplify.Logging.logger(
             CategoryType.STORAGE,
@@ -70,7 +70,7 @@ internal class TransferManager @JvmOverloads constructor(
     init {
         RouterWorker.workerFactories[pluginKey] = TransferWorkerFactory(
             transferDB,
-            s3,
+            clientProvider,
             transferStatusUpdater
         )
     }
@@ -92,6 +92,7 @@ internal class TransferManager @JvmOverloads constructor(
     fun upload(
         transferId: String,
         bucket: String,
+        region: String,
         key: String,
         file: File,
         metadata: ObjectMetadata,
@@ -100,12 +101,22 @@ internal class TransferManager @JvmOverloads constructor(
         useAccelerateEndpoint: Boolean = false
     ): TransferObserver {
         val transferRecordId = if (shouldUploadInMultipart(file)) {
-            createMultipartUploadRecords(transferId, bucket, key, file, metadata, cannedAcl, useAccelerateEndpoint)
+            createMultipartUploadRecords(
+                transferId,
+                bucket,
+                region,
+                key,
+                file,
+                metadata,
+                cannedAcl,
+                useAccelerateEndpoint
+            )
         } else {
             val uri = transferDB.insertSingleTransferRecord(
                 transferId,
                 TransferType.UPLOAD,
                 bucket,
+                region,
                 key,
                 file,
                 cannedAcl,
@@ -146,6 +157,7 @@ internal class TransferManager @JvmOverloads constructor(
         return upload(
             transferId,
             options.bucket,
+            options.region,
             key,
             file,
             options.objectMetadata,
@@ -159,6 +171,7 @@ internal class TransferManager @JvmOverloads constructor(
     fun download(
         transferId: String,
         bucket: String,
+        region: String,
         key: String,
         file: File,
         listener: TransferListener? = null,
@@ -171,6 +184,7 @@ internal class TransferManager @JvmOverloads constructor(
             transferId,
             TransferType.DOWNLOAD,
             bucket,
+            region,
             key,
             file,
             useAccelerateEndpoint = useAccelerateEndpoint
@@ -245,6 +259,7 @@ internal class TransferManager @JvmOverloads constructor(
     private fun createMultipartUploadRecords(
         transferId: String,
         bucket: String,
+        region: String,
         key: String,
         file: File,
         metadata: ObjectMetadata,
@@ -262,6 +277,7 @@ internal class TransferManager @JvmOverloads constructor(
         contentValues[0] = transferDB.generateContentValuesForMultiPartUpload(
             transferId,
             bucket,
+            region,
             key,
             file,
             fileOffset,
@@ -278,6 +294,7 @@ internal class TransferManager @JvmOverloads constructor(
             contentValues[partNum] = transferDB.generateContentValuesForMultiPartUpload(
                 UUID.randomUUID().toString(),
                 bucket,
+                region,
                 key,
                 file,
                 fileOffset,

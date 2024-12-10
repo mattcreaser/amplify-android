@@ -16,7 +16,6 @@
 package com.amplifyframework.api.aws;
 
 import android.net.Uri;
-import android.util.Base64;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.util.ObjectsCompat;
@@ -24,6 +23,7 @@ import androidx.core.util.ObjectsCompat;
 import com.amplifyframework.AmplifyException;
 import com.amplifyframework.api.ApiException;
 import com.amplifyframework.api.ApiException.ApiAuthException;
+import com.amplifyframework.api.aws.utils.JSONObjectExtensionsKt;
 import com.amplifyframework.api.graphql.GraphQLRequest;
 import com.amplifyframework.api.graphql.GraphQLResponse;
 import com.amplifyframework.core.Action;
@@ -103,21 +103,7 @@ final class SubscriptionEndpoint {
         this.okHttpClient = okHttpClientBuilder.build();
     }
 
-    synchronized <T> void requestSubscription(
-        @NonNull GraphQLRequest<T> request,
-        @NonNull Consumer<String> onSubscriptionStarted,
-        @NonNull Consumer<GraphQLResponse<T>> onNextItem,
-        @NonNull Consumer<ApiException> onSubscriptionError,
-        @NonNull Action onSubscriptionComplete) {
-        requestSubscription(request,
-                            apiConfiguration.getAuthorizationType(),
-                            onSubscriptionStarted,
-                            onNextItem,
-                            onSubscriptionError,
-                            onSubscriptionComplete);
-    }
-
-    synchronized <T> void requestSubscription(
+    <T> void requestSubscription(
             @NonNull GraphQLRequest<T> request,
             @NonNull AuthorizationType authType,
             @NonNull Consumer<String> onSubscriptionStarted,
@@ -140,11 +126,13 @@ final class SubscriptionEndpoint {
             if (webSocketListener == null || webSocketListener.isDisconnectedState()) {
                 webSocketListener = new AmplifyWebSocketListener();
                 try {
-                    webSocket = okHttpClient.newWebSocket(new Request.Builder()
-                                                              .url(buildConnectionRequestUrl(authType))
-                                                              .addHeader("Sec-WebSocket-Protocol", "graphql-ws")
-                                                              .header("User-Agent", UserAgent.string())
-                                                              .build(), webSocketListener);
+                    Request.Builder builder = new Request.Builder()
+                                                  .url(buildConnectionRequestUrl())
+                                                  .addHeader("Sec-WebSocket-Protocol", "graphql-ws")
+                                                  .header("User-Agent", UserAgent.string());
+                    // Add all authorization headers
+                    getConnectionAuthorizationHeaders(authType).forEach(builder::header);
+                    webSocket = okHttpClient.newWebSocket(builder.build(), webSocketListener);
                 } catch (ApiException apiException) {
                     onSubscriptionError.accept(apiException);
                     return;
@@ -155,17 +143,17 @@ final class SubscriptionEndpoint {
             pendingSubscriptionIds.add(subscriptionId);
             socketListener = webSocketListener;
             socket = webSocket;
-        }
 
-        // Every request waits here for the connection to be ready.
-        Connection connection = socketListener.waitForConnectionReady();
-        if (connection.hasFailure()) {
-            // If the latch didn't count all the way down
-            if (pendingSubscriptionIds.remove(subscriptionId)) {
-                // The subscription was pending, so we need to emit an error.
-                onSubscriptionError.accept(
-                    new ApiException(connection.getFailureReason(), AmplifyException.TODO_RECOVERY_SUGGESTION));
-                return;
+            // Every request waits here for the connection to be ready.
+            Connection connection = socketListener.waitForConnectionReady();
+            if (connection.hasFailure()) {
+                // If the latch didn't count all the way down
+                if (pendingSubscriptionIds.remove(subscriptionId)) {
+                    // The subscription was pending, so we need to emit an error.
+                    onSubscriptionError.accept(
+                        new ApiException(connection.getFailureReason(), AmplifyException.TODO_RECOVERY_SUGGESTION));
+                    return;
+                }
             }
         }
 
@@ -271,7 +259,7 @@ final class SubscriptionEndpoint {
         dispatcher.dispatchNextMessage(data);
     }
 
-    synchronized void releaseSubscription(String subscriptionId) throws ApiException {
+    void releaseSubscription(String subscriptionId) throws ApiException {
         // First thing we should do is remove it from the pending subscription collection so
         // the other methods can't grab a hold of the subscription.
         final Subscription<?> subscription = subscriptions.get(subscriptionId);
@@ -317,17 +305,17 @@ final class SubscriptionEndpoint {
         }
     }
 
+    private Map<String, String> getConnectionAuthorizationHeaders(AuthorizationType authType) throws ApiException {
+        JSONObject headers = authorizer.createHeadersForConnection(authType);
+        return JSONObjectExtensionsKt.toStringMap(headers);
+    }
+
     /*
      * Discover WebSocket endpoint from the AppSync endpoint.
      * AppSync endpoint : https://xxxxxxxxxxxx.appsync-api.ap-southeast-2.amazonaws.com/graphql
      * Discovered WebSocket endpoint : wss:// xxxxxxxxxxxx.appsync-realtime-api.ap-southeast-2.amazonaws.com/graphql
      */
-    private String buildConnectionRequestUrl(AuthorizationType authType) throws ApiException {
-        // Construct the authorization header for connection request
-        final byte[] rawHeader = authorizer.createHeadersForConnection(authType)
-            .toString()
-            .getBytes();
-
+    private String buildConnectionRequestUrl() throws ApiException {
         URL appSyncEndpoint = null;
         try {
             appSyncEndpoint = new URL(apiConfiguration.getEndpoint());
@@ -357,8 +345,6 @@ final class SubscriptionEndpoint {
             .scheme("wss")
             .authority(authority)
             .path(path)
-            .appendQueryParameter("header", Base64.encodeToString(rawHeader, Base64.DEFAULT))
-            .appendQueryParameter("payload", "e30=")
             .build()
             .toString();
     }
